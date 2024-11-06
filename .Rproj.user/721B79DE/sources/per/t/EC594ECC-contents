@@ -1,0 +1,57 @@
+---
+#title: "Exampla_analysis"
+---
+
+# Example Data Analysis
+
+## Research question: 
+What are the characteristics of some Spotify most streamed songs.
+
+## Intended audience for the data analysis: 
+People working in music industry like singers and producers, as well as streaming media platform operators.
+
+## Original Data:
+[Spotify Most Streamed Songs Dataset](https://www.kaggle.com/datasets/abdulszz/spotify-most-streamed-songs)
+
+## A data dictionary:
+### Basic Track Information
+
+| **Field**             | **Description**                                      |
+|-----------------------|------------------------------------------------------|
+| `track_name`          | Name of the song.                                   |
+| `artist(s)_name`     | Name of the artist(s) performing the song.         |
+| `artist_count`       | Number of artists contributing to the song.         |
+| `released_year`      | Year of release.                                    |
+| `released_month`     | Month of release.                                   |
+| `released_day`       | Day of release.                                     |
+
+### Streaming Metrics
+
+| **Field**                        | **Description**                                  |
+|----------------------------------|--------------------------------------------------|
+| `in_spotify_playlists`          | Number of Spotify playlists featuring the song. |
+| `in_spotify_charts`             | Rank of the song on Spotify charts.             |
+| `streams`                       | Total number of streams on Spotify.             |
+| `in_apple_playlists`            | Presence in Apple Music playlists.               |
+| `in_apple_charts`               | Rank of the song on Apple Music charts.         |
+| `in_deezer_playlists`           | Presence in Deezer playlists.                    |
+| `in_deezer_charts`              | Rank of the song on Deezer charts.              |
+| `in_shazam_charts`              | Rank of the song on Shazam charts.              |
+
+### Musical Attributes
+
+| **Field**              | **Description**                                   |
+|------------------------|---------------------------------------------------|
+| `bpm`                  | Beats per minute, representing the tempo.       |
+| `key`                  | Musical key of the song.                         |
+| `mode`                 | Indicates major or minor mode.                   |
+| `danceability_%`       | Suitability of the song for dancing.             |
+| `valence_%`           | Positivity of the song’s musical content.        |
+| `energy_%`            | Perceived energy level of the song.              |
+| `acousticness_%`      | Presence of acoustic sounds in the song.         |
+| `instrumentalness_%`  | Proportion of instrumental content in the track. |
+| `liveness_%`          | Presence of live performance elements.            |
+| `speechiness_%`       | Amount of spoken words in the song.              |
+
+## Data analysis
+1. Read the csv file

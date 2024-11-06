@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My Website",
+    "section": "",
+    "text": "My name is Can Wang. I am a master’s student in biostatistics at Johns Hopkins University."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "Master’s in Biostatistics, Johns Hopkins University\nBachelor’s in Industrial Engineering, Tsinghua University"
+  },
+  {
+    "objectID": "about.html#educational-background",
+    "href": "about.html#educational-background",
+    "title": "About Me",
+    "section": "",
+    "text": "Master’s in Biostatistics, Johns Hopkins University\nBachelor’s in Industrial Engineering, Tsinghua University"
+  },
+  {
+    "objectID": "about.html#professional-experience",
+    "href": "about.html#professional-experience",
+    "title": "About Me",
+    "section": "Professional Experience",
+    "text": "Professional Experience\n\nInterned at Department of Data Research and Development, Bailongma Yunxing Technology Co., Ltd.\nResearch Assistant at Vanke School of Public Health, Tsinghua University."
+  },
+  {
+    "objectID": "about.html#personal-interests",
+    "href": "about.html#personal-interests",
+    "title": "About Me",
+    "section": "Personal Interests",
+    "text": "Personal Interests\nIn my free time, I enjoy playing music, board games and reading science fictions."
+  },
+  {
+    "objectID": "example-analysis.html",
+    "href": "example-analysis.html",
+    "title": "Example Analysis",
+    "section": "",
+    "text": "In this section, I will showcase a simple data analysis project using R and relevant packages."
+  },
+  {
+    "objectID": "example-analysis.html#loading-libraries",
+    "href": "example-analysis.html#loading-libraries",
+    "title": "Example Analysis",
+    "section": "",
+    "text": "1+1\n\n[1] 2"
+  },
+  {
+    "objectID": "Example_analysis.html",
+    "href": "Example_analysis.html",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "What are the characteristics of some Spotify most streamed songs.\n\n\n\n\nPeople working in music industry like singers and producers, as well as streaming media platform operators.\n\n\n\nSpotify Most Streamed Songs Dataset\n\n\n\n(Abdulszz 2021)\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\ntrack_name\nName of the song.\n\n\nartist(s)_name\nName of the artist(s) performing the song.\n\n\nartist_count\nNumber of artists contributing to the song.\n\n\nreleased_year\nYear of release.\n\n\nreleased_month\nMonth of release.\n\n\nreleased_day\nDay of release.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nin_spotify_playlists\nNumber of Spotify playlists featuring the song.\n\n\nin_spotify_charts\nRank of the song on Spotify charts.\n\n\nstreams\nTotal number of streams on Spotify.\n\n\nin_apple_playlists\nPresence in Apple Music playlists.\n\n\nin_apple_charts\nRank of the song on Apple Music charts.\n\n\nin_deezer_playlists\nPresence in Deezer playlists.\n\n\nin_deezer_charts\nRank of the song on Deezer charts.\n\n\nin_shazam_charts\nRank of the song on Shazam charts.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nbpm\nBeats per minute, representing the tempo.\n\n\nkey\nMusical key of the song.\n\n\nmode\nIndicates major or minor mode.\n\n\ndanceability_%\nSuitability of the song for dancing.\n\n\nvalence_%\nPositivity of the song’s musical content.\n\n\nenergy_%\nPerceived energy level of the song.\n\n\nacousticness_%\nPresence of acoustic sounds in the song.\n\n\ninstrumentalness_%\nProportion of instrumental content in the track.\n\n\nliveness_%\nPresence of live performance elements.\n\n\nspeechiness_%\nAmount of spoken words in the song.\n\n\n\n\n\n\n\n\nRead the csv file\n\n\ndata &lt;- read.csv('Spotify Most Streamed Songs.csv')\n#head(data)\n\n\nThe relationship between numbers of artists and streams.\n\n\nlibrary(ggplot2)\n# pre-processing\ndata &lt;- data[!grepl(\"[^0-9.-]\", data$streams), ]\ndata &lt;- data[as.numeric(data$streams) &gt;= 10000, ]\ndata$streams &lt;- as.numeric(data$streams)\n\n\ndata$artist_count_group &lt;- ifelse(data$artist_count == 1, \"artist_count = 1\", \n                                  ifelse(data$artist_count == 2, \"artist_count = 2\", \n                                         \"artist_count &gt;= 3\"))\n#head(data)\n\nggplot(data, aes(x = streams, fill = artist_count_group)) +\n  geom_histogram(position = \"identity\", \n                 alpha = 0.5,        \n                 color = \"black\") +  \n  scale_fill_manual(values = c(\"skyblue\", \"tomato\", \"forestgreen\")) + \n  labs(title = \"Streams Distribution by Artist Count Group\", \n       subtitle = \"The distributions of streams in different groups are similar\", \n       x = \"Streams\", \n       y = \"Frequency\",\n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(legend.title = element_blank())\n\n`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.\n\n\n\n\n\n\n\n\n\n\nThe relationship between numbers of artists and streams.\n\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nlibrary(ggplot2)\n\ntop_artists &lt;- data %&gt;%\n  count(artist_name = `artist.s._name`) %&gt;% \n  arrange(desc(n)) %&gt;%                      \n  head(10)                                 \n\n\naverage_streams &lt;- data %&gt;%\n  filter(`artist.s._name` %in% top_artists$artist_name) %&gt;%\n  group_by(`artist.s._name`) %&gt;%\n  summarise(average_streams = mean(streams, na.rm = TRUE))  \n\noverall_avg_streams &lt;- mean(data$streams, na.rm = TRUE)\n\naverage_streams &lt;- average_streams %&gt;%\n  mutate(artist.s._name = factor(`artist.s._name`, levels = top_artists$artist_name))\n\nggplot(average_streams, aes(x = artist.s._name, y = average_streams)) +\n  geom_point(size = 3, color = \"blue\") +  \n  geom_line(group = 1, color = \"blue\", size = 1) +  \n  geom_hline(yintercept = overall_avg_streams, linetype = \"dashed\", color = \"red\", size = 1) + \n  labs(title = \"Average Streams of Top 10 Artists\", \n       subtitle = \"Red line: overall average streams\", \n       x = \"Artist Name\", \n       y = \"Average Streams\",\n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))  \n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\n\n\n\n\n\n\n\n\n\n\n\ntop_artists &lt;- data %&gt;%\n  count(artist_name = `artist.s._name`) %&gt;% \n  arrange(desc(n)) %&gt;%                      \n  head(10)\n\nlibrary(knitr)\nkable(top_artists, caption = \"Top 10 Artists and Their Count\")\n\n\n\n\nTop 10 Artists and Their Count\n\n\nartist_name\nn\n\n\n\n\nTaylor Swift\n34\n\n\nThe Weeknd\n22\n\n\nBad Bunny\n19\n\n\nSZA\n19\n\n\nHarry Styles\n17\n\n\nKendrick Lamar\n12\n\n\nMorgan Wallen\n11\n\n\nEd Sheeran\n9\n\n\nBTS\n8\n\n\nDrake, 21 Savage\n8\n\n\n\n\n\nFigure 1: The most frequent 10 artists\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nNote that the Artist Names on the x-axis are sorted by the number of song appearances.\n\n\n\nThe relationship between streams and musical attributes when analyzing.\n\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(ggplot2)\n\n# Convert continuous columns to long format\ndata_long_continuous &lt;- data %&gt;%\n  select(streams, bpm, danceability_., valence_., energy_., acousticness_., instrumentalness_., liveness_., speechiness_.) %&gt;%\n  pivot_longer(cols = -streams, names_to = \"variable\", values_to = \"value\")\n\n# Plot for continuous variables (scatter plots)\nggplot(data_long_continuous, aes(x = value, y = streams)) +\n  geom_point(aes(color = variable), size = 0.7, alpha = 0.6) +  # Scatter plot\n  geom_smooth(method = \"lm\", se = FALSE, color = \"black\", linetype = \"dashed\") +  # Add regression line\n  facet_wrap(~ variable, scales = \"free\", ncol = 3) +  # Create faceted plots\n  labs(title = \"Relationship between Continuous Variables and Streams\", \n       subtitle = \"Patterns of relationships between streams and 8 differenet musical attributes\",\n       x = \"Variable Value\", \n       y = \"Streams\", \n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1), \n        strip.text = element_text(size = 10))  # Rotate x-axis labels for better readability\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\n# For 'key' variable (categorical), use a boxplot\nggplot(data, aes(x = as.factor(key), y = streams)) + \n  geom_boxplot(aes(color = as.factor(key)), outlier.shape = NA) +  # Boxplot for 'key'\n  labs(title = \"Relationship between Key and Streams\", \n       subtitle = \"Box plot of streams of songs in different keys\",\n       x = \"Key\", \n       y = \"Streams\", \n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels\n\n\n\n\n\n\n\n\n(Williamson, Parker, and Kendrick 1989)\n\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(corrplot)\n\nWarning: package 'corrplot' was built under R version 4.4.1\n\n\ncorrplot 0.95 loaded\n\nlibrary(reshape2)\n\n\nAttaching package: 'reshape2'\n\n\nThe following object is masked from 'package:tidyr':\n\n    smiths\n\nlibrary(ggcorrplot)\n\nselected_columns &lt;- data %&gt;%\n  select(\n    streams, bpm, danceability_., valence_., energy_., \n    acousticness_., instrumentalness_., liveness_., speechiness_.\n  ) %&gt;%\n  mutate(across(everything(), as.numeric))  \n\ncorrelation_matrix &lt;- cor(selected_columns, use = \"pairwise.complete.obs\")\n\nggcorrplot(correlation_matrix, \n           hc.order = TRUE, \n           type = \"lower\",  \n           lab = TRUE,      \n           lab_size = 3,   \n           title = \"Correlation Heatmap of Variables\", \n           ggtheme = theme_minimal()) \n\n\n\n\n\n\n\n\n(Yule 1897)\n\n\n\n\n\n\nTip\n\n\n\nSeparate the discrete and continuous variables.\n\n\n\n\n\nFrom the analysis, we see that (1) In general, the number of artists and the popularity of artists don’t affect the streams of songs. (2) There’s associations between streams and the musical attributes. For example, songs with less acousticness, midium bpm, more danceability, higher energy, less instrumentalness, less liveness and less speechiness tend to have more streams. But the relationships are not very linear. (3) There are some correlations between the musical attributes of songs. For example, acousticness and energy are negatively correlated. Valence and danceability are positively correlated.\n\n\n\nFrom package dplyr: count(); arrange(); head(); filter(); gourp_by(); summarise(); mutate(); select()\nFrom package tidyr: pivot_longer()\nFrom package ggplot2: geom_histogram(); geom_point(); geom_line(); geom_hline()"
+  },
+  {
+    "objectID": "about.html#research-interests",
+    "href": "about.html#research-interests",
+    "title": "About Me",
+    "section": "Research Interests",
+    "text": "Research Interests\nI’m interested in causal inference and clinical trials."
+  },
+  {
+    "objectID": "Example_analysis.html#research-question",
+    "href": "Example_analysis.html#research-question",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "What are the characteristics of some Spotify most streamed songs."
+  },
+  {
+    "objectID": "Example_analysis.html#intended-audience-for-the-data-analysis",
+    "href": "Example_analysis.html#intended-audience-for-the-data-analysis",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "People working in music industry like singers and producers, as well as streaming media platform operators."
+  },
+  {
+    "objectID": "Example_analysis.html#original-data",
+    "href": "Example_analysis.html#original-data",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "Spotify Most Streamed Songs Dataset"
+  },
+  {
+    "objectID": "Example_analysis.html#a-data-dictionary",
+    "href": "Example_analysis.html#a-data-dictionary",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "(Abdulszz 2021)\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\ntrack_name\nName of the song.\n\n\nartist(s)_name\nName of the artist(s) performing the song.\n\n\nartist_count\nNumber of artists contributing to the song.\n\n\nreleased_year\nYear of release.\n\n\nreleased_month\nMonth of release.\n\n\nreleased_day\nDay of release.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nin_spotify_playlists\nNumber of Spotify playlists featuring the song.\n\n\nin_spotify_charts\nRank of the song on Spotify charts.\n\n\nstreams\nTotal number of streams on Spotify.\n\n\nin_apple_playlists\nPresence in Apple Music playlists.\n\n\nin_apple_charts\nRank of the song on Apple Music charts.\n\n\nin_deezer_playlists\nPresence in Deezer playlists.\n\n\nin_deezer_charts\nRank of the song on Deezer charts.\n\n\nin_shazam_charts\nRank of the song on Shazam charts.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nbpm\nBeats per minute, representing the tempo.\n\n\nkey\nMusical key of the song.\n\n\nmode\nIndicates major or minor mode.\n\n\ndanceability_%\nSuitability of the song for dancing.\n\n\nvalence_%\nPositivity of the song’s musical content.\n\n\nenergy_%\nPerceived energy level of the song.\n\n\nacousticness_%\nPresence of acoustic sounds in the song.\n\n\ninstrumentalness_%\nProportion of instrumental content in the track.\n\n\nliveness_%\nPresence of live performance elements.\n\n\nspeechiness_%\nAmount of spoken words in the song."
+  },
+  {
+    "objectID": "Example_analysis.html#data-analysis",
+    "href": "Example_analysis.html#data-analysis",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "Read the csv file\n\n\ndata &lt;- read.csv('Spotify Most Streamed Songs.csv')\n#head(data)\n\n\nThe relationship between numbers of artists and streams.\n\n\nlibrary(ggplot2)\n# pre-processing\ndata &lt;- data[!grepl(\"[^0-9.-]\", data$streams), ]\ndata &lt;- data[as.numeric(data$streams) &gt;= 10000, ]\ndata$streams &lt;- as.numeric(data$streams)\n\n\ndata$artist_count_group &lt;- ifelse(data$artist_count == 1, \"artist_count = 1\", \n                                  ifelse(data$artist_count == 2, \"artist_count = 2\", \n                                         \"artist_count &gt;= 3\"))\n#head(data)\n\nggplot(data, aes(x = streams, fill = artist_count_group)) +\n  geom_histogram(position = \"identity\", \n                 alpha = 0.5,        \n                 color = \"black\") +  \n  scale_fill_manual(values = c(\"skyblue\", \"tomato\", \"forestgreen\")) + \n  labs(title = \"Streams Distribution by Artist Count Group\", \n       subtitle = \"The distributions of streams in different groups are similar\", \n       x = \"Streams\", \n       y = \"Frequency\",\n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(legend.title = element_blank())\n\n`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.\n\n\n\n\n\n\n\n\n\n\nThe relationship between numbers of artists and streams.\n\n\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\nlibrary(ggplot2)\n\ntop_artists &lt;- data %&gt;%\n  count(artist_name = `artist.s._name`) %&gt;% \n  arrange(desc(n)) %&gt;%                      \n  head(10)                                 \n\n\naverage_streams &lt;- data %&gt;%\n  filter(`artist.s._name` %in% top_artists$artist_name) %&gt;%\n  group_by(`artist.s._name`) %&gt;%\n  summarise(average_streams = mean(streams, na.rm = TRUE))  \n\noverall_avg_streams &lt;- mean(data$streams, na.rm = TRUE)\n\naverage_streams &lt;- average_streams %&gt;%\n  mutate(artist.s._name = factor(`artist.s._name`, levels = top_artists$artist_name))\n\nggplot(average_streams, aes(x = artist.s._name, y = average_streams)) +\n  geom_point(size = 3, color = \"blue\") +  \n  geom_line(group = 1, color = \"blue\", size = 1) +  \n  geom_hline(yintercept = overall_avg_streams, linetype = \"dashed\", color = \"red\", size = 1) + \n  labs(title = \"Average Streams of Top 10 Artists\", \n       subtitle = \"Red line: overall average streams\", \n       x = \"Artist Name\", \n       y = \"Average Streams\",\n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))  \n\nWarning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\nℹ Please use `linewidth` instead.\n\n\n\n\n\n\n\n\n\n\n\ntop_artists &lt;- data %&gt;%\n  count(artist_name = `artist.s._name`) %&gt;% \n  arrange(desc(n)) %&gt;%                      \n  head(10)\n\nlibrary(knitr)\nkable(top_artists, caption = \"Top 10 Artists and Their Count\")\n\n\n\n\nTop 10 Artists and Their Count\n\n\nartist_name\nn\n\n\n\n\nTaylor Swift\n34\n\n\nThe Weeknd\n22\n\n\nBad Bunny\n19\n\n\nSZA\n19\n\n\nHarry Styles\n17\n\n\nKendrick Lamar\n12\n\n\nMorgan Wallen\n11\n\n\nEd Sheeran\n9\n\n\nBTS\n8\n\n\nDrake, 21 Savage\n8\n\n\n\n\n\nFigure 1: The most frequent 10 artists\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nNote that the Artist Names on the x-axis are sorted by the number of song appearances.\n\n\n\nThe relationship between streams and musical attributes when analyzing.\n\n\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(ggplot2)\n\n# Convert continuous columns to long format\ndata_long_continuous &lt;- data %&gt;%\n  select(streams, bpm, danceability_., valence_., energy_., acousticness_., instrumentalness_., liveness_., speechiness_.) %&gt;%\n  pivot_longer(cols = -streams, names_to = \"variable\", values_to = \"value\")\n\n# Plot for continuous variables (scatter plots)\nggplot(data_long_continuous, aes(x = value, y = streams)) +\n  geom_point(aes(color = variable), size = 0.7, alpha = 0.6) +  # Scatter plot\n  geom_smooth(method = \"lm\", se = FALSE, color = \"black\", linetype = \"dashed\") +  # Add regression line\n  facet_wrap(~ variable, scales = \"free\", ncol = 3) +  # Create faceted plots\n  labs(title = \"Relationship between Continuous Variables and Streams\", \n       subtitle = \"Patterns of relationships between streams and 8 differenet musical attributes\",\n       x = \"Variable Value\", \n       y = \"Streams\", \n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1), \n        strip.text = element_text(size = 10))  # Rotate x-axis labels for better readability\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\n\n\n\n\n\n\n# For 'key' variable (categorical), use a boxplot\nggplot(data, aes(x = as.factor(key), y = streams)) + \n  geom_boxplot(aes(color = as.factor(key)), outlier.shape = NA) +  # Boxplot for 'key'\n  labs(title = \"Relationship between Key and Streams\", \n       subtitle = \"Box plot of streams of songs in different keys\",\n       x = \"Key\", \n       y = \"Streams\", \n       caption = \"Data source: Spotify Most Streamed Songs Dataset\") +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels\n\n\n\n\n\n\n\n\n(Williamson, Parker, and Kendrick 1989)\n\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(corrplot)\n\nWarning: package 'corrplot' was built under R version 4.4.1\n\n\ncorrplot 0.95 loaded\n\nlibrary(reshape2)\n\n\nAttaching package: 'reshape2'\n\n\nThe following object is masked from 'package:tidyr':\n\n    smiths\n\nlibrary(ggcorrplot)\n\nselected_columns &lt;- data %&gt;%\n  select(\n    streams, bpm, danceability_., valence_., energy_., \n    acousticness_., instrumentalness_., liveness_., speechiness_.\n  ) %&gt;%\n  mutate(across(everything(), as.numeric))  \n\ncorrelation_matrix &lt;- cor(selected_columns, use = \"pairwise.complete.obs\")\n\nggcorrplot(correlation_matrix, \n           hc.order = TRUE, \n           type = \"lower\",  \n           lab = TRUE,      \n           lab_size = 3,   \n           title = \"Correlation Heatmap of Variables\", \n           ggtheme = theme_minimal()) \n\n\n\n\n\n\n\n\n(Yule 1897)\n\n\n\n\n\n\nTip\n\n\n\nSeparate the discrete and continuous variables."
+  },
+  {
+    "objectID": "Example_analysis.html#functions-used",
+    "href": "Example_analysis.html#functions-used",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "From package dplyr: count(); arrange(); head(); filter(); gourp_by(); summarise(); mutate(); select()\nFrom package tidyr: pivot_longer()\nFrom package ggplot2: geom_histogram(); geom_point(); geom_line(); geom_hline()"
+  },
+  {
+    "objectID": "Example_analysis.html#a-data-dictionaryabdulszz_2021",
+    "href": "Example_analysis.html#a-data-dictionaryabdulszz_2021",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "Field\nDescription\n\n\n\n\ntrack_name\nName of the song.\n\n\nartist(s)_name\nName of the artist(s) performing the song.\n\n\nartist_count\nNumber of artists contributing to the song.\n\n\nreleased_year\nYear of release.\n\n\nreleased_month\nMonth of release.\n\n\nreleased_day\nDay of release.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nin_spotify_playlists\nNumber of Spotify playlists featuring the song.\n\n\nin_spotify_charts\nRank of the song on Spotify charts.\n\n\nstreams\nTotal number of streams on Spotify.\n\n\nin_apple_playlists\nPresence in Apple Music playlists.\n\n\nin_apple_charts\nRank of the song on Apple Music charts.\n\n\nin_deezer_playlists\nPresence in Deezer playlists.\n\n\nin_deezer_charts\nRank of the song on Deezer charts.\n\n\nin_shazam_charts\nRank of the song on Shazam charts.\n\n\n\n\n\n\n\n\n\n\n\n\n\nField\nDescription\n\n\n\n\nbpm\nBeats per minute, representing the tempo.\n\n\nkey\nMusical key of the song.\n\n\nmode\nIndicates major or minor mode.\n\n\ndanceability_%\nSuitability of the song for dancing.\n\n\nvalence_%\nPositivity of the song’s musical content.\n\n\nenergy_%\nPerceived energy level of the song.\n\n\nacousticness_%\nPresence of acoustic sounds in the song.\n\n\ninstrumentalness_%\nProportion of instrumental content in the track.\n\n\nliveness_%\nPresence of live performance elements.\n\n\nspeechiness_%\nAmount of spoken words in the song."
+  },
+  {
+    "objectID": "Example_analysis.html#summary-of-the-results",
+    "href": "Example_analysis.html#summary-of-the-results",
+    "title": "Example Data Analysis",
+    "section": "",
+    "text": "From the analysis, we see that (1) In general, the number of artists and the popularity of artists don’t affect the streams of songs. (2) There’s associations between streams and the musical attributes. For example, songs with less acousticness, midium bpm, more danceability, higher energy, less instrumentalness, less liveness and less speechiness tend to have more streams. But the relationships are not very linear. (3) There are some correlations between the musical attributes of songs. For example, acousticness and energy are negatively correlated. Valence and danceability are positively correlated."
+  }
+]

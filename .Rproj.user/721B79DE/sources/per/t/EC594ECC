@@ -1,0 +1,32 @@
+{
+    "id": "EC594ECC",
+    "path": "~/Desktop/website/Project1-website/Example_analysis.qmd",
+    "project_path": "Example_analysis.qmd",
+    "type": "quarto_markdown",
+    "hash": "4080155314",
+    "contents": "",
+    "dirty": false,
+    "created": 1730742016408.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "rmdVisualMode": "false",
+        "rmdVisualWrapConfigured": "true",
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "cursorPosition": "56,20",
+        "scrollLine": "23",
+        "rmdVisualModeLocation": "35:0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1730755041,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1730755041621,
+    "read_only": false,
+    "read_only_alternatives": []
+}

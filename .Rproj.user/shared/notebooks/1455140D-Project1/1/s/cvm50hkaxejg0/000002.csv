@@ -1,0 +1,4 @@
+"0","wget https://raw.githubusercontent.com/stephaniehicks/jhustatprogramming2024/main/projects/01-project/students.csv
+#cat students.csv"
+"2","/var/folders/73/bwxp78l12d1dv7xc90p7m9900000gn/T/RtmpFbdOcK/chunk-code-14f276e1dd30.txt: line 1: wget: command not found
+"
