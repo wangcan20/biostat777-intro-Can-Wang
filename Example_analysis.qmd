@@ -1,0 +1,238 @@
+---
+#title: "Exampla_analysis"
+bibliography: reference.bib
+---
+
+# Example Data Analysis
+
+
+## Research question: 
+What are the characteristics of some Spotify most streamed songs.
+
+![](image.jpg){ width=30% }
+
+## Intended audience for the data analysis: 
+People working in music industry like singers and producers, as well as streaming media platform operators.
+
+## Original Data:
+[Spotify Most Streamed Songs Dataset](https://www.kaggle.com/datasets/abdulszz/spotify-most-streamed-songs)
+
+## A data dictionary:
+[@abdulszz_2021]
+
+### Basic Track Information
+
+| **Field**             | **Description**                                      |
+|-----------------------|------------------------------------------------------|
+| `track_name`          | Name of the song.                                   |
+| `artist(s)_name`     | Name of the artist(s) performing the song.         |
+| `artist_count`       | Number of artists contributing to the song.         |
+| `released_year`      | Year of release.                                    |
+| `released_month`     | Month of release.                                   |
+| `released_day`       | Day of release.                                     |
+
+### Streaming Metrics
+
+| **Field**                        | **Description**                                  |
+|----------------------------------|--------------------------------------------------|
+| `in_spotify_playlists`          | Number of Spotify playlists featuring the song. |
+| `in_spotify_charts`             | Rank of the song on Spotify charts.             |
+| `streams`                       | Total number of streams on Spotify.             |
+| `in_apple_playlists`            | Presence in Apple Music playlists.               |
+| `in_apple_charts`               | Rank of the song on Apple Music charts.         |
+| `in_deezer_playlists`           | Presence in Deezer playlists.                    |
+| `in_deezer_charts`              | Rank of the song on Deezer charts.              |
+| `in_shazam_charts`              | Rank of the song on Shazam charts.              |
+
+### Musical Attributes
+
+| **Field**              | **Description**                                   |
+|------------------------|---------------------------------------------------|
+| `bpm`                  | Beats per minute, representing the tempo.       |
+| `key`                  | Musical key of the song.                         |
+| `mode`                 | Indicates major or minor mode.                   |
+| `danceability_%`       | Suitability of the song for dancing.             |
+| `valence_%`           | Positivity of the song’s musical content.        |
+| `energy_%`            | Perceived energy level of the song.              |
+| `acousticness_%`      | Presence of acoustic sounds in the song.         |
+| `instrumentalness_%`  | Proportion of instrumental content in the track. |
+| `liveness_%`          | Presence of live performance elements.            |
+| `speechiness_%`       | Amount of spoken words in the song.              |
+
+## Data analysis
+1. Read the csv file
+```{r}
+data <- read.csv('Spotify Most Streamed Songs.csv')
+#head(data)
+```
+
+2. The relationship between numbers of artists and streams.
+```{r}
+library(ggplot2)
+# pre-processing
+data <- data[!grepl("[^0-9.-]", data$streams), ]
+data <- data[as.numeric(data$streams) >= 10000, ]
+data$streams <- as.numeric(data$streams)
+
+
+data$artist_count_group <- ifelse(data$artist_count == 1, "artist_count = 1", 
+                                  ifelse(data$artist_count == 2, "artist_count = 2", 
+                                         "artist_count >= 3"))
+#head(data)
+
+ggplot(data, aes(x = streams, fill = artist_count_group)) +
+  geom_histogram(position = "identity", 
+                 alpha = 0.5,        
+                 color = "black") +  
+  scale_fill_manual(values = c("skyblue", "tomato", "forestgreen")) + 
+  labs(title = "Streams Distribution by Artist Count Group", 
+       subtitle = "The distributions of streams in different groups are similar", 
+       x = "Streams", 
+       y = "Frequency",
+       caption = "Data source: Spotify Most Streamed Songs Dataset") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+
+```
+3. The relationship between numbers of artists and streams.
+
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+top_artists <- data %>%
+  count(artist_name = `artist.s._name`) %>% 
+  arrange(desc(n)) %>%                      
+  head(10)                                 
+
+
+average_streams <- data %>%
+  filter(`artist.s._name` %in% top_artists$artist_name) %>%
+  group_by(`artist.s._name`) %>%
+  summarise(average_streams = mean(streams, na.rm = TRUE))  
+
+overall_avg_streams <- mean(data$streams, na.rm = TRUE)
+
+average_streams <- average_streams %>%
+  mutate(artist.s._name = factor(`artist.s._name`, levels = top_artists$artist_name))
+
+ggplot(average_streams, aes(x = artist.s._name, y = average_streams)) +
+  geom_point(size = 3, color = "blue") +  
+  geom_line(group = 1, color = "blue", size = 1) +  
+  geom_hline(yintercept = overall_avg_streams, linetype = "dashed", color = "red", size = 1) + 
+  labs(title = "Average Streams of Top 10 Artists", 
+       subtitle = "Red line: overall average streams", 
+       x = "Artist Name", 
+       y = "Average Streams",
+       caption = "Data source: Spotify Most Streamed Songs Dataset") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  
+
+
+```
+
+```{r}
+#| label: fig-mtcars
+#| fig-cap: "The most frequent 10 artists"
+#| column: margin
+top_artists <- data %>%
+  count(artist_name = `artist.s._name`) %>% 
+  arrange(desc(n)) %>%                      
+  head(10)
+
+library(knitr)
+kable(top_artists, caption = "Top 10 Artists and Their Count")
+
+```
+::: {.callout-note}
+Note that the Artist Names on the x-axis are sorted by the number of song appearances.
+:::
+
+4. The relationship between streams and musical attributes when analyzing.
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Convert continuous columns to long format
+data_long_continuous <- data %>%
+  select(streams, bpm, danceability_., valence_., energy_., acousticness_., instrumentalness_., liveness_., speechiness_.) %>%
+  pivot_longer(cols = -streams, names_to = "variable", values_to = "value")
+
+# Plot for continuous variables (scatter plots)
+ggplot(data_long_continuous, aes(x = value, y = streams)) +
+  geom_point(aes(color = variable), size = 0.7, alpha = 0.6) +  # Scatter plot
+  geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "dashed") +  # Add regression line
+  facet_wrap(~ variable, scales = "free", ncol = 3) +  # Create faceted plots
+  labs(title = "Relationship between Continuous Variables and Streams", 
+       subtitle = "Patterns of relationships between streams and 8 differenet musical attributes",
+       x = "Variable Value", 
+       y = "Streams", 
+       caption = "Data source: Spotify Most Streamed Songs Dataset") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        strip.text = element_text(size = 10))  # Rotate x-axis labels for better readability
+
+# For 'key' variable (categorical), use a boxplot
+ggplot(data, aes(x = as.factor(key), y = streams)) + 
+  geom_boxplot(aes(color = as.factor(key)), outlier.shape = NA) +  # Boxplot for 'key'
+  labs(title = "Relationship between Key and Streams", 
+       subtitle = "Box plot of streams of songs in different keys",
+       x = "Key", 
+       y = "Streams", 
+       caption = "Data source: Spotify Most Streamed Songs Dataset") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+
+
+```
+[@williamson1989box]
+
+
+```{r}
+
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(reshape2)
+library(ggcorrplot)
+
+selected_columns <- data %>%
+  select(
+    streams, bpm, danceability_., valence_., energy_., 
+    acousticness_., instrumentalness_., liveness_., speechiness_.
+  ) %>%
+  mutate(across(everything(), as.numeric))  
+
+correlation_matrix <- cor(selected_columns, use = "pairwise.complete.obs")
+
+ggcorrplot(correlation_matrix, 
+           hc.order = TRUE, 
+           type = "lower",  
+           lab = TRUE,      
+           lab_size = 3,   
+           title = "Correlation Heatmap of Variables", 
+           ggtheme = theme_minimal()) 
+```
+
+[@yule1897theory]
+
+::: {.callout-tip}
+## Tip
+
+Separate the discrete and continuous variables.
+:::
+
+## Summary of the results
+From the analysis, we see that (1) In general, the number of artists and the popularity of artists don't affect the streams of songs. (2) There's associations between streams and the musical attributes. For example, songs with less acousticness, midium bpm, more danceability, higher energy, less instrumentalness, less liveness and less speechiness tend to have more streams. But the relationships are not very linear. (3) There are some correlations between the musical attributes of songs. For example, acousticness and energy are negatively correlated. Valence and danceability are positively correlated.
+
+## Functions used:
+
+From package dplyr: count(); arrange(); head(); filter(); gourp_by(); summarise(); mutate(); select()
+
+From package tidyr: pivot_longer()
+
+From package ggplot2: geom_histogram(); geom_point(); geom_line(); geom_hline()

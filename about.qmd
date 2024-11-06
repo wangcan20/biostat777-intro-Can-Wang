@@ -1,0 +1,19 @@
+---
+title: "About Me"
+format: html
+---
+
+
+## Educational Background
+- **Master's in Biostatistics**, Johns Hopkins University
+- **Bachelor's in Industrial Engineering**, Tsinghua University
+
+## Professional Experience
+- Interned at Department of Data Research and Development, Bailongma Yunxing Technology Co., Ltd.
+- Research Assistant at Vanke School of Public Health, Tsinghua University.
+
+## Research Interests
+I'm interested in causal inference and clinical trials.
+
+## Personal Interests
+In my free time, I enjoy playing music, board games and reading science fictions.

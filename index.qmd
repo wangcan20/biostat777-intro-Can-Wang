@@ -1,0 +1,9 @@
+---
+title: "Welcome to My Website"
+format: html
+---
+
+
+My name is Can Wang. I am a master’s student in biostatistics at Johns Hopkins University.
+
+<img src="picture.jpg" alt="My picture" width="200">  
